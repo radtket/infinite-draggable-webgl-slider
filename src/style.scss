@@ -1,0 +1,158 @@
+@import "../node_modules/bourbon/core/_bourbon.scss";
+
+html,
+body {
+	height: 100%;
+}
+
+body {
+	position: relative;
+	overflow: hidden;
+	background-color: #111;
+	font-family: "helvetica neue", sans-serif;
+}
+
+* {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+}
+
+.head {
+	@include position(fixed, 0 null null 0);
+	display: flex;
+	justify-content: space-between;
+	padding: 2vw 2.5vw;
+	pointer-events: none;
+	width: 100%;
+	z-index: 1000;
+
+	> div {
+		display: flex;
+	}
+
+	a {
+		color: #fff;
+		font-size: 1rem;
+		overflow: hidden;
+		pointer-events: all;
+		position: relative;
+		text-decoration: none;
+
+		div,
+		&:after {
+			transition: transform 0.85s cubic-bezier(0.19, 1, 0.22, 1);
+		}
+
+		&:after {
+			@include position(absolute, 100% null null 0);
+			@include size(100%);
+			content: attr(data-txt);
+			color: pink;
+		}
+
+		&:nth-child(2) {
+			margin-left: 2vw;
+		}
+
+		&:hover {
+			div,
+			&:after {
+				transform: translateY(-100%);
+			}
+		}
+	}
+}
+
+.dom-gl {
+	@include size(100%);
+	@include position(fixed, 0 null null 0);
+	pointer-events: none;
+	z-index: 1;
+}
+
+.slider {
+	align-items: center;
+	cursor: grab;
+	display: flex;
+	height: 100%;
+	padding: 0 22.5vw;
+	position: relative;
+	user-select: none;
+	z-index: 2;
+
+	&__inner {
+		display: flex;
+		position: relative;
+	}
+}
+
+.slide {
+	overflow: hidden;
+
+	&:first-child {
+		position: relative;
+	}
+
+	&:not(:first-child) {
+		position: absolute;
+		top: 0;
+		height: 100%;
+	}
+
+	&__inner {
+		position: relative;
+		overflow: hidden;
+		width: 55vw;
+		padding-top: 56.5%;
+	}
+
+	img {
+		display: none;
+	}
+}
+
+.titles {
+	@include position(fixed, 50% null null 50%);
+	overflow: hidden;
+	pointer-events: none;
+	transform: translate(-50%, -50%);
+	z-index: 3;
+
+	&__list {
+		@include position(absolute, 0 null null 0);
+	}
+
+	&__title {
+		align-items: center;
+		color: #fff;
+		display: flex;
+		font-size: 6vw;
+		font-weight: bold;
+		justify-content: center;
+		letter-spacing: -0.1vw;
+
+		&--proxy {
+			visibility: hidden;
+		}
+	}
+}
+
+.progress {
+	@include size(100%, 0.25rem);
+	@include position(fixed, null null 0 0);
+	overflow: hidden;
+	pointer-events: none;
+
+	&__line {
+		@include position(absolute, 0 null null 0);
+		@include size(100%);
+		background-color: #fff;
+		transform-origin: left;
+		transform: scaleX(0);
+
+		&:nth-child(2) {
+			transform-origin: right;
+		}
+	}
+}

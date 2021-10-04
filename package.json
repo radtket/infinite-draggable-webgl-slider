@@ -1,0 +1,28 @@
+{
+  "name": "infinite-draggable-webgl-slider",
+  "version": "1.0.0",
+  "description": "A Pen created on CodePen.io. Original URL: [https://codepen.io/ReGGae/pen/povjKxV](https://codepen.io/ReGGae/pen/povjKxV).",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "eslintConfig": {
+    "parser": "babel-eslint",
+    "extends": [
+      "radtket"
+    ]
+  },
+  "dependencies": {
+    "babel-eslint": "^10.1.0",
+    "bourbon": "^7.0.0",
+    "eslint-config-radtket": "^1.0.22",
+    "gsap": "^3.8.0",
+    "three": "^0.133.0"
+  },
+  "devDependencies": {
+    "sass": "^1.42.1"
+  }
+}
