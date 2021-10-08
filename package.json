@@ -20,7 +20,7 @@
     "bourbon": "^7.0.0",
     "eslint-config-radtket": "^1.0.22",
     "gsap": "^3.8.0",
-    "three": "^0.133.0"
+    "three": "^0.109.0"
   },
   "devDependencies": {
     "sass": "^1.42.1"

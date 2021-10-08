@@ -57,7 +57,6 @@ void main(){
 
 export const fragmentShader = `
 precision mediump float;
-
 ${backgroundCoverUv}
 
 uniform sampler2D uTexture;

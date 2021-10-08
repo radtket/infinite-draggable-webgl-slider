@@ -1,7 +1,8 @@
+import gsap from "gsap";
+
 import gl from "./Gl";
 import Slider from "./Slider";
 
-const { gsap } = window;
 /***/
 /** * INIT STUFF *** */
 /***/

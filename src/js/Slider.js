@@ -1,7 +1,35 @@
+import gsap from "gsap";
 import { store } from "./constants";
 import Plane from "./Plane";
 
-const { gsap } = window;
+const { isDevice, ww } = store;
+
+const usePosition = ({ changedTouches, clientX, clientY, target }) => {
+  return {
+    x: changedTouches ? changedTouches[0].clientX : clientX,
+    y: changedTouches ? changedTouches[0].clientY : clientY,
+    target,
+  };
+};
+
+const useIsVisible = ({ left, right, width, min, max }, { state, opts }) => {
+  const { currentRounded } = state;
+  const { threshold } = opts;
+  const translate = gsap.utils.wrap(min, max, currentRounded);
+
+  const start = left + translate;
+  const end = right + translate;
+
+  return {
+    translate,
+    isVisible: start < threshold + ww && end > -threshold,
+    progress: gsap.utils.clamp(
+      0,
+      1,
+      1 - (translate + left + width) / (ww + width)
+    ),
+  };
+};
 
 class Slider {
   constructor(el, opts = {}) {
@@ -18,33 +46,33 @@ class Slider {
     };
 
     this.state = {
-      target: 0,
-      current: 0,
-      currentRounded: 0,
-      y: 0,
-      on: {
-        x: 0,
-        y: 0,
-      },
-      off: 0,
-      progress: 0,
-      diff: 0,
-      max: 0,
-      min: 0,
       snap: {
         points: [],
       },
       flags: {
         dragging: false,
       },
+      on: {
+        x: 0,
+        y: 0,
+      },
+      off: 0,
+      current: 0,
+      currentRounded: 0,
+      diff: 0,
+      max: 0,
+      min: 0,
+      progress: 0,
+      target: 0,
+      y: 0,
     };
 
     this.items = [];
 
     this.events = {
-      move: store.isDevice ? "touchmove" : "mousemove",
-      up: store.isDevice ? "touchend" : "mouseup",
-      down: store.isDevice ? "touchstart" : "mousedown",
+      move: isDevice ? "touchmove" : "mousemove",
+      up: isDevice ? "touchend" : "mouseup",
+      down: isDevice ? "touchstart" : "mousedown",
     };
 
     this.init();
@@ -86,9 +114,8 @@ class Slider {
   }
 
   setup() {
-    const { ww } = store;
-    const { state } = this;
-    const { items, titles } = this.ui;
+    const { state, ui } = this;
+    const { items, titles } = ui;
 
     const { width: wrapWidth, left: wrapDiff } =
       this.el.getBoundingClientRect();
@@ -178,6 +205,7 @@ class Slider {
         tl,
         out: false,
       });
+
       return all;
     }, this.items);
   }
@@ -192,34 +220,16 @@ class Slider {
     this.tl && this.tl.progress(state.progress);
   }
 
-  render() {
-    this.calc();
-    this.transformItems();
-  }
-
   transformItems() {
-    const { flags } = this.state;
+    const { items = [], state, opts } = this;
+    const { flags } = state;
 
-    // this.items.forEach(item => {
-    //   const { translate, isVisible, progress } = this.isVisible(item);
-
-    //   item.plane.updateX(translate);
-    //   item.plane.mat.uniforms.uVelo.value = this.state.diff;
-
-    //   if (!item.out && item.tl) {
-    //     item.tl.progress(progress);
-    //   }
-
-    //   if (isVisible || flags.resize) {
-    //     item.out = false;
-    //   } else if (!item.out) {
-    //     item.out = true;
-    //   }
-    // });
-
-    for (let i = 0; i < this.items.length; i++) {
+    items.forEach((_, i) => {
       const item = this.items[i];
-      const { translate, isVisible, progress } = this.isVisible(item);
+      const { translate, isVisible, progress } = useIsVisible(item, {
+        state,
+        opts,
+      });
 
       item.plane.updateX(translate);
       item.plane.mat.uniforms.uVelo.value = this.state.diff;
@@ -233,46 +243,16 @@ class Slider {
       } else if (!item.out) {
         item.out = true;
       }
-    }
+    });
   }
 
-  isVisible({ left, right, width, min, max }) {
-    const { ww } = store;
-    const { currentRounded } = this.state;
-    const translate = gsap.utils.wrap(min, max, currentRounded);
-    const { threshold } = this.opts;
-    const start = left + translate;
-    const end = right + translate;
-    const isVisible = start < threshold + ww && end > -threshold;
-    const progress = gsap.utils.clamp(
-      0,
-      1,
-      1 - (translate + left + width) / (ww + width)
-    );
-
-    return {
-      translate,
-      isVisible,
-      progress,
-    };
+  render() {
+    this.calc();
+    this.transformItems();
   }
-
-  clampTarget() {
-    const { state } = this;
-
-    state.target = gsap.utils.clamp(state.max, 0, state.target);
-  }
-
-  getPos = ({ changedTouches, clientX, clientY, target }) => {
-    return {
-      x: changedTouches ? changedTouches[0].clientX : clientX,
-      y: changedTouches ? changedTouches[0].clientY : clientY,
-      target,
-    };
-  };
 
   onDown(e) {
-    const { x, y } = this.getPos(e);
+    const { x, y } = usePosition(e);
     const { flags, on } = this.state;
 
     flags.dragging = true;
@@ -288,10 +268,12 @@ class Slider {
   }
 
   onMove(e) {
-    const { x, y } = this.getPos(e);
+    const { x, y } = usePosition(e);
     const { state } = this;
 
-    if (!state.flags.dragging) return;
+    if (!state.flags.dragging) {
+      return;
+    }
 
     const { off, on } = state;
     const moveX = x - on.x;

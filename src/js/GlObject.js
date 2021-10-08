@@ -1,6 +1,7 @@
 import { store } from "./constants";
 
 const { THREE } = window;
+const { ww, wh } = store;
 
 class GlObject extends THREE.Object3D {
   init(el) {
@@ -13,8 +14,8 @@ class GlObject extends THREE.Object3D {
     const { left, top, width, height } = this.rect;
 
     this.pos = {
-      x: left + width / 2 - store.ww / 2,
-      y: top + height / 2 - store.wh / 2,
+      x: left + width / 2 - ww / 2,
+      y: top + height / 2 - wh / 2,
     };
 
     this.position.y = this.pos.y;
