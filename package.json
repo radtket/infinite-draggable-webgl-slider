@@ -4,7 +4,12 @@
   "description": "A Pen created on CodePen.io. Original URL: [https://codepen.io/ReGGae/pen/povjKxV](https://codepen.io/ReGGae/pen/povjKxV).",
   "main": "index.js",
   "scripts": {
-    "start": "parcel src/index.html"
+    "start": "parcel src/index.html",
+    "prebuild-dev": "shx rm -rf dist/*",
+    "build-dev": "parcel build src/index.html --no-minify --public-url ./",
+    "prebuild": "shx rm -rf dist/*",
+    "build": "parcel build src/index.html --no-minify --public-url ./",
+    "push-gh-pages": "push-dir --dir=dist --branch=gh-pages --cleanup --verbose"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +25,10 @@
     "bourbon": "^7.0.0",
     "eslint-config-radtket": "^1.0.22",
     "gsap": "^3.8.0",
-    "three": "^0.109.0"
+    "three": "^0.109.0",
+    "parcel-bundler": "^1.12.5",
+    "push-dir": "^0.4.1",
+    "shx": "^0.3.4"
   },
   "devDependencies": {
     "sass": "^1.42.1"
